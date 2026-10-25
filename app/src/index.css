@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --ring: 88 98 232;
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'palt' 1;
+  }
+  body {
+    @apply bg-paper font-sans text-base text-ink-900;
+  }
+  ::selection {
+    background: #c7cdff;
+    color: #111833;
+  }
+  :focus-visible {
+    outline: none;
+  }
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1, 'palt' 0;
+  }
+}
+
+@layer components {
+  /* 共通のフォーカスリング。キーボード操作時のみ表示 */
+  .focus-ring {
+    @apply focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-paper;
+  }
+
+  .panel {
+    @apply rounded-panel bg-surface shadow-card;
+  }
+
+  .eyebrow {
+    @apply text-2xs font-semibold uppercase tracking-[0.14em] text-ink-400;
+  }
+
+  /* 入力欄：フォーカスで下線が伸びる＋境界が締まる */
+  .field {
+    @apply relative h-10 w-full rounded-[11px] border border-line bg-surface px-3 text-sm text-ink-900 shadow-inset outline-none transition-[border-color,box-shadow,background-color] duration-200 ease-out placeholder:text-ink-300 hover:border-line-strong;
+  }
+  .field:focus {
+    @apply border-indigo-400 bg-white;
+    box-shadow: 0 0 0 4px rgb(88 98 232 / 0.12), inset 0 1px 2px rgba(17, 24, 51, 0.04);
+  }
+  .field[aria-invalid='true'] {
+    @apply border-err/60;
+    box-shadow: 0 0 0 4px rgb(184 53 46 / 0.08);
+  }
+  .field:disabled {
+    @apply cursor-not-allowed bg-surface-3 text-ink-400;
+  }
+
+  select.field {
+    @apply cursor-pointer appearance-none pr-9;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23676D90' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+  }
+
+  /* 主要アクションボタン：光の移動（--mx はポインター位置） */
+  .btn-primary {
+    --mx: 50%;
+    background:
+      radial-gradient(120px 60px at var(--mx) -10%, rgba(173, 186, 255, 0.55), transparent 70%),
+      linear-gradient(180deg, #2b3474 0%, #1a2150 55%, #141a40 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+      0 0 0 1px #0d1233,
+      0 1px 2px rgba(10, 15, 36, 0.3),
+      0 6px 16px -6px rgba(53, 57, 166, 0.55);
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.16) 50%, transparent 65%);
+    transform: translateX(-120%);
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+  .btn-primary:hover:not(:disabled)::after {
+    transform: translateX(120%);
+  }
+  .btn-primary:disabled {
+    background: linear-gradient(180deg, #c9cbd8, #b9bccc);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 0 1px #b0b3c4;
+  }
+
+  /* 表のスクロール影 */
+  .scroll-shadow-x {
+    background:
+      linear-gradient(to right, #fff 30%, rgba(255, 255, 255, 0)) left center,
+      linear-gradient(to left, #fff 30%, rgba(255, 255, 255, 0)) right center,
+      radial-gradient(farthest-side at 0 50%, rgba(17, 24, 51, 0.12), transparent) left center,
+      radial-gradient(farthest-side at 100% 50%, rgba(17, 24, 51, 0.12), transparent) right center;
+    background-repeat: no-repeat;
+    background-size: 40px 100%, 40px 100%, 12px 100%, 12px 100%;
+    background-attachment: local, local, scroll, scroll;
+  }
+
+  .thin-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #d2cec4 transparent;
+  }
+}
+
+/* 紙面のような微細なノイズ */
+.paper-grain::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.07 0 0 0 0 0.09 0 0 0 0 0.2 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes tipIn {
+  from { opacity: 0; transform: translateY(3px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
